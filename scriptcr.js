@@ -19,7 +19,6 @@ const calendar = document.querySelector(".calendar"),
 
 let today = new Date();
 let activeDay;
-let weekday = today.getDay();
 let month = today.getMonth();
 let year = today.getFullYear();
 
@@ -52,7 +51,6 @@ const eventsArr = [];
 getEvents();
 console.log(eventsArr);
 
-//function to add days in days with class day and prev-date next-date on previous month and next month days and active on today
 function initCalendar() {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -76,7 +74,6 @@ function initCalendar() {
         eventsArr.forEach((eventObj) => {
             if (
                 eventObj.day === i &&
-                eventObj.weekday == i&&
                 eventObj.month === month + 1 &&
                 eventObj.year === year
             ) {
@@ -86,8 +83,7 @@ function initCalendar() {
         if (
             i === new Date().getDate() &&
             year === new Date().getFullYear() &&
-            month === new Date().getMonth()&&
-            weekday == new Date().getDay()
+            month === new Date().getMonth()
         ) {
             activeDay = i;
             getActiveDay(i);
@@ -142,13 +138,15 @@ function addListner() {
     const days = document.querySelectorAll(".day");
     days.forEach((day) => {
         day.addEventListener("click", (e) => {
-            getActiveDay(e.target.innerHTML);
-            updateEvents(Number(e.target.innerHTML));
             activeDay = Number(e.target.innerHTML);
-            //remove active
+            updateEvents(Number(e.target.innerHTML));
+
+            getActiveDay(e.target.innerHTML);
+
             days.forEach((day) => {
                 day.classList.remove("active");
             });
+
             //if clicked prev-date or next-date switch to that month
             if (e.target.classList.contains("prev-date")) {
                 prevMonth();
@@ -188,7 +186,6 @@ function addListner() {
 
 todayBtn.addEventListener("click", () => {
     today = new Date();
-    weekday = today.getDay();
     month = today.getMonth();
     year = today.getFullYear();
     initCalendar();
@@ -216,7 +213,6 @@ function gotoDate() {
     const dateArr = dateInput.value.split("/");
     if (dateArr.length === 2) {
         if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1].length === 4) {
-            //weekday = dateArr[2];
             month = dateArr[0] - 1;
             year = dateArr[1];
             initCalendar();
@@ -225,10 +221,12 @@ function gotoDate() {
     }
     alert("Data Inválida");
 }
+
 function getActiveDay(date) {
-    const day = new Date(year, month,weekday, date);
-    const weekdays = day.toString().split("")[0];
-    eventDay.innerHTML = weekdays[weekday];
+    const day = new Date(year, month, date)
+    const dayWeek = day.getDay()
+    const dayPT = weekdays[dayWeek].toString()
+    eventDay.innerHTML = dayPT;
     eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 function updateEvents(date) {
