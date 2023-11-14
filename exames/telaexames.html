@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #AB82FF;
+            padding: 20px;
+        }
+
+        header {
+            background-color: white;
+            color: #AB82FF;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-weight: bolder;
+            font-size: 55px;
+        }
+
+        header img {
+            height: 50px;
+            vertical-align: middle;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #eeeeee;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .container h2 {
+            color: white;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .file-container {
+            display: flex;
+            flex-wrap: wrap;
+            height: auto;
+        }
+
+        .upload-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #file-upload {
+            background-color: #fff;
+            padding: 10px;
+            width: 500px;
+            height: 195px;
+            color: #AB82FF;
+            border-radius: 5px;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza na vertical */
+            justify-content: center; /* Centraliza na horizontal */
+        }
+
+        #file-upload button {
+            margin-top: 10px;
+        }
+
+        .file-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            width: 500px;
+            height: 195px;
+            padding: 10px;
+            color: #AB82FF;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .file-box img {
+            width: 100%;
+            height: auto;
+        }
+
+        .file-name {
+            font-size: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        button img {
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.0.3/mammoth.browser.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <img src="/principal/logobooks-64.webp">
+        <h1>Study Plans</h1>
+    </header>
+    <br>
+    <div class="container">
+        <h2><a href="/principal/telaweb.html">HOME</a></h2>
+        <h2>EXAMES</h2>
+        <h2><a href="/cronograma/cronograma.html">CRONOGRAMA</a></h2>
+        <h2>FÓRUM</h2>
+        <h2>BIBLIOTECA</h2>
+    </div>
+
+    <div class="upload-container">
+        <div id="file-container" class="file-container">
+            <div id="file-upload">
+                <h1>Adicione exames</h1>
+                <button onclick="document.getElementById('getfile').click()">
+                    <img src="moreROXO.png" alt="Adicionar arquivo">
+                </button>
+                <input type='file' id="getfile" style="display: none" onchange="loadFile(event)">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var loadFile = function (event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var fileContainer = document.getElementById('file-container');
+                var uploadContainer = document.getElementById('upload-container');
+
+                // Adiciona o arquivo à linha atual
+                var fileBox = document.createElement('div');
+                fileBox.className = 'file-box';
+                var fileName = event.target.files[0].name;
+                fileBox.innerHTML = '<p class="file-name" onclick="downloadFile(\'' + reader.result + '\', \'' + fileName +
+                    '\')">' + fileName + '</p><img src="' + getPreviewUrl(reader.result, fileName) + '">';
+                fileContainer.appendChild(fileBox);
+
+                // Verifica se há espaço suficiente na linha atual para o próximo arquivo
+                var containerWidth = fileContainer.clientWidth;
+                var totalBoxWidth = Array.from(fileContainer.children).reduce((acc, child) => acc + child.offsetWidth + 10, 0);
+
+                // Se não houver espaço suficiente, cria uma nova linha
+                if (totalBoxWidth > containerWidth) {
+                    fileContainer.appendChild(document.createElement('br'));
+                }
+
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        };
+
+        var getPreviewUrl = function (fileDataUrl, fileName) {
+            if (fileName.endsWith('.pdf')) {
+                // Se for um PDF, abre no navegador
+                return 'https://mozilla.github.io/pdf.js/web/viewer.html?file=' + fileDataUrl;
+            } else if (fileName.endsWith('.docx')) {
+                // Se for um DOCX, abre no navegador
+                return 'https://www.freeoffice.com/download.php?product=FreeOffice2021&fname=FreeOffice2021_en';
+            } else {
+                // Para outros tipos de arquivo, usa o data URL diretamente
+                return fileDataUrl;
+            }
+        };
+
+        var downloadFile = function (fileUrl, fileName) {
+            var link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = fileName;
+            link.click();
+        };
+    </script>
+</body>
+
+</html>
